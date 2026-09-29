@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hospital Management System — User Manual</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #8470ff;
+    --primary-dark: #5d47de;
+    --primary-light: rgba(132, 112, 255, 0.12);
+    --bg: #f9fafb;
+    --surface: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --text-secondary: #6b7280;
+    --sidebar-width: 300px;
+    --radius: 12px;
+    --shadow: 0 1px 1px 0 rgb(0 0 0 / 0.05), 0 1px 2px 0 rgb(0 0 0 / 0.02);
+    --shadow-md: 0 4px 16px rgba(17, 24, 39, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Inter", Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Top bar (mobile) ---------- */
+  .topbar {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar__brand { font-weight: 700; font-size: 1.05rem; }
+  .topbar__toggle {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 0 40px;
+  }
+  .sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 24px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .sidebar__brand-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: var(--primary);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .sidebar__brand-text { font-weight: 700; font-size: 1.02rem; line-height: 1.25; }
+  .sidebar__brand-text small { display: block; font-weight: 400; color: var(--text-secondary); font-size: 0.75rem; }
+
+  .sidebar nav { padding: 0 12px; }
+  .sidebar__group-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    padding: 16px 12px 6px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.88rem;
+    margin: 1px 0;
+  }
+  .sidebar a:hover { background: var(--primary-light); color: var(--primary-dark); }
+  .sidebar a.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+
+  main { flex: 1; min-width: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary) 55%, #b7acff);
+    color: #fff;
+    padding: 56px 48px;
+  }
+  .hero .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    opacity: 0.85;
+    margin-bottom: 10px;
+  }
+  .hero h1 { margin: 0 0 12px; font-size: 2.1rem; font-weight: 800; letter-spacing: -0.01em; }
+  .hero p { margin: 0; max-width: 640px; opacity: 0.92; font-size: 1.02rem; }
+
+  .content { max-width: 980px; margin: 0 auto; padding: 40px 48px 100px; }
+
+  .intro-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 32px;
+    margin-bottom: 40px;
+  }
+  .intro-card h2 { margin-top: 0; }
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .role-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.85rem;
+  }
+  .role-chip b { display: block; color: var(--primary-dark); margin-bottom: 3px; }
+
+  section.module {
+    scroll-margin-top: 20px;
+    margin-bottom: 56px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  section.module:last-child { border-bottom: none; }
+
+  .module__header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .module__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .module h2 { margin: 0; font-size: 1.4rem; letter-spacing: -0.01em; }
+  .module__path {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .module__desc { color: var(--text-secondary); margin: 10px 0 20px; max-width: 720px; }
+  .module__desc b { color: var(--text); font-weight: 600; }
+
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+  }
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid var(--border);
+    cursor: zoom-in;
+  }
+  figcaption {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-md);
+    z-index: 20;
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+
+  @media (max-width: 900px) {
+    .topbar { display: flex; }
+    .sidebar {
+      position: fixed;
+      left: 0; top: 57px;
+      height: calc(100vh - 57px);
+      z-index: 25;
+      transform: translateX(-100%);
+      transition: transform 180ms ease;
+      box-shadow: var(--shadow-md);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .hero { padding: 36px 20px; }
+    .hero h1 { font-size: 1.6rem; }
+    .content { padding: 28px 18px 80px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar__brand">HMS User Manual</div>
+    <button class="topbar__toggle" id="navToggle" aria-label="Toggle navigation">&#9776;</button>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <div class="sidebar__brand-icon">H</div>
+        <div class="sidebar__brand-text">Hospital Management System<small>User Manual</small></div>
+      </div>
+      <nav id="sideNav">
+        <a href="#getting-started">Getting Started</a>
+
+        <div class="sidebar__group-label">Front Desk &amp; Patients</div>
+        <a href="#m-dashboard">1. Dashboard</a>
+        <a href="#m-patients">2. Patients</a>
+        <a href="#m-doctors">3. Doctors</a>
+        <a href="#m-departments">4. Departments</a>
+        <a href="#m-appointments">5. Appointments</a>
+        <a href="#m-opd-queue">14. OPD Queue</a>
+        <a href="#m-emergency">21. Emergency</a>
+
+        <div class="sidebar__group-label">Inpatient Care</div>
+        <a href="#m-admissions">6. Admissions</a>
+        <a href="#m-wards">7. Wards</a>
+        <a href="#m-medical-records">8. Medical Records</a>
+        <a href="#m-vitals">9. Vitals</a>
+        <a href="#m-ot-scheduling">15. OT Scheduling</a>
+        <a href="#m-operation-theatres">16. Operation Theatres</a>
+
+        <div class="sidebar__group-label">Clinical Workflow</div>
+        <a href="#m-prescriptions">10. Prescriptions</a>
+        <a href="#m-medication-chart">11. Medication Chart (MAR)</a>
+        <a href="#m-lab-reports">12. Lab Reports</a>
+        <a href="#m-radiology">13. Radiology</a>
+        <a href="#m-blood-bank">17. Blood Bank</a>
+        <a href="#m-referrals">18. Referrals</a>
+        <a href="#m-consents">27. Consents</a>
+        <a href="#m-documents">28. Patient Documents</a>
+        <a href="#m-alerts">38. Alerts</a>
+
+        <div class="sidebar__group-label">Pharmacy &amp; Inventory</div>
+        <a href="#m-medicines">22. Medicines</a>
+        <a href="#m-pharmacy">23. Pharmacy</a>
+        <a href="#m-vendors">24. Vendors</a>
+        <a href="#m-purchase-orders">25. Purchase Orders</a>
+        <a href="#m-assets">19. Assets</a>
+
+        <div class="sidebar__group-label">Billing &amp; Insurance</div>
+        <a href="#m-billing">29. Billing</a>
+        <a href="#m-insurance-providers">30. Insurance Providers</a>
+        <a href="#m-insurance-policies">31. Insurance Policies</a>
+        <a href="#m-insurance-claims">32. Insurance Claims</a>
+        <a href="#m-insurance-preauth">33. Insurance Pre-Authorizations</a>
+
+        <div class="sidebar__group-label">People &amp; Feedback</div>
+        <a href="#m-staff-scheduling">26. Staff Scheduling</a>
+        <a href="#m-feedback">20. Patient Feedback</a>
+
+        <div class="sidebar__group-label">AI &amp; Administration</div>
+        <a href="#m-ai-assistant">34. AI Assistant</a>
+        <a href="#m-audit-logs">35. Audit Logs</a>
+        <a href="#m-ai-interaction-logs">36. AI Interaction Logs</a>
+        <a href="#m-hospital-settings">37. Hospital Settings</a>
+        <a href="#m-role-permissions">39. Role &amp; Permission Management</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="hero">
+        <div class="eyebrow">Hospital Management System</div>
+        <h1>User Manual</h1>
+        <p>A screen-by-screen guide to every module in the system — how to log in, what each page is for, and how to add or update records. Screenshots below were captured while signed in as an Administrator, so a few management-only screens (like Role &amp; Permission Management) may not be visible to every role.</p>
+      </div>
+
+      <div class="content">
+
+        <section id="getting-started" class="intro-card">
+          <h2>Getting Started</h2>
+          <p>Open the application in your browser and sign in with the email and password given to you by your hospital administrator. New patients can also self-register from the login screen using <b>"Create an account."</b></p>
+          <figure style="max-width:640px">
+            <img src="img/00-login.png" alt="Login screen">
+            <figcaption>Sign-in screen — enter your email and password, then click Sign in.</figcaption>
+          </figure>
+          <p style="margin-top:20px">What you see after signing in depends on your <b>role</b> — Admin, Doctor, Nurse, Receptionist, or Patient. Each role only sees the modules it has permission to use; an Administrator can change this from <a href="#m-role-permissions">Role &amp; Permission Management</a>.</p>
+          <div class="role-grid">
+            <div class="role-chip"><b>Admin</b>Full access to every module, including settings and role permissions.</div>
+            <div class="role-chip"><b>Doctor</b>Patients, appointments, medical records, prescriptions, vitals, lab/radiology orders.</div>
+            <div class="role-chip"><b>Nurse</b>Vitals, medication chart (MAR), OPD queue, ward/bed support.</div>
+            <div class="role-chip"><b>Receptionist</b>Patient registration, appointments, admissions, billing, OPD tokens.</div>
+            <div class="role-chip"><b>Patient</b>Their own profile, appointments, bills, records, and the AI Assistant.</div>
+          </div>
+        </section>
+
+        <!-- ===================== MODULE SECTIONS ===================== -->
+
+        <section id="m-dashboard" class="module">
+          <div class="module__header"><span class="module__number">1</span><h2>Dashboard</h2><span class="module__path">/dashboard</span></div>
+          <p class="module__desc">The home page after signing in. Shows quick counts (patients, doctors, appointments, pending lab reports), a monthly revenue chart, and analytics tiles such as active patients, no-show rate, and cancellation rate. Use this page to get a quick pulse of the hospital's activity for the day.</p>
+          <div class="shots">
+            <figure><img src="img/01-dashboard.png" alt="Dashboard"><figcaption>Dashboard overview</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-patients" class="module">
+          <div class="module__header"><span class="module__number">2</span><h2>Patients</h2><span class="module__path">/patients</span></div>
+          <p class="module__desc"><b>To add a patient:</b> click <b>Add Patient</b>, fill in first/last name, date of birth, gender, phone, and optionally email, blood group, address, and emergency contact, then click <b>Create patient</b>. Click a patient's name in the list to open their full profile, edit details, or deactivate them.</p>
+          <div class="shots">
+            <figure><img src="img/02-patients.png" alt="Patients list"><figcaption>Patients list</figcaption></figure>
+            <figure><img src="img/02-patients-add.png" alt="Add patient dialog"><figcaption>Add Patient dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-doctors" class="module">
+          <div class="module__header"><span class="module__number">3</span><h2>Doctors</h2><span class="module__path">/doctors</span></div>
+          <p class="module__desc"><b>To add a doctor:</b> click <b>Add Doctor</b> and enter their name, specialization, department, license number, years of experience, and consultation fee. Doctors created here also get a login account so they can sign in to the system.</p>
+          <div class="shots">
+            <figure><img src="img/03-doctors.png" alt="Doctors list"><figcaption>Doctors list</figcaption></figure>
+            <figure><img src="img/03-doctors-add.png" alt="Add doctor dialog"><figcaption>Add Doctor dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-departments" class="module">
+          <div class="module__header"><span class="module__number">4</span><h2>Departments</h2><span class="module__path">/departments</span></div>
+          <p class="module__desc">Manage the hospital's clinical departments (e.g. Cardiology, General Medicine, Pediatrics). Departments are used when assigning doctors and when booking appointments or admissions. Click <b>Add Department</b> to create a new one.</p>
+          <div class="shots">
+            <figure><img src="img/04-departments.png" alt="Departments list"><figcaption>Departments list</figcaption></figure>
+            <figure><img src="img/04-departments-add.png" alt="Add department dialog"><figcaption>Add Department dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-appointments" class="module">
+          <div class="module__header"><span class="module__number">5</span><h2>Appointments</h2><span class="module__path">/appointments</span></div>
+          <p class="module__desc"><b>To book an appointment:</b> click <b>Book Appointment</b>, search for and select the patient and doctor, then pick an available date and time slot. From the list you can also reschedule, cancel, or update the status of an existing appointment. A reminder is sent to the patient automatically before the appointment.</p>
+          <div class="shots">
+            <figure><img src="img/05-appointments.png" alt="Appointments list"><figcaption>Appointments list</figcaption></figure>
+            <figure><img src="img/05-appointments-add.png" alt="Book appointment dialog"><figcaption>Book Appointment dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-admissions" class="module">
+          <div class="module__header"><span class="module__number">6</span><h2>Admissions</h2><span class="module__path">/admissions</span></div>
+          <p class="module__desc"><b>To admit a patient:</b> click <b>Admit Patient</b>, choose the patient, ward, and bed, and enter the admitting doctor and reason. From the list you can later transfer the patient to a different bed or discharge them, which frees up the bed automatically.</p>
+          <div class="shots">
+            <figure><img src="img/06-admissions.png" alt="Admissions list"><figcaption>Admissions list</figcaption></figure>
+            <figure><img src="img/06-admissions-add.png" alt="Admit patient dialog"><figcaption>Admit Patient dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-wards" class="module">
+          <div class="module__header"><span class="module__number">7</span><h2>Wards</h2><span class="module__path">/wards</span></div>
+          <p class="module__desc">Manage wards (e.g. General Ward, ICU, Maternity) and the beds inside each one. Click <b>Add Ward</b> to create a new ward, then open a ward to add its individual beds. Bed status (Available/Occupied/Maintenance) updates automatically as patients are admitted or discharged.</p>
+          <div class="shots">
+            <figure><img src="img/07-wards.png" alt="Wards list"><figcaption>Wards list</figcaption></figure>
+            <figure><img src="img/07-wards-add.png" alt="Add ward dialog"><figcaption>Add Ward dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-medical-records" class="module">
+          <div class="module__header"><span class="module__number">8</span><h2>Medical Records</h2><span class="module__path">/medical-records</span></div>
+          <p class="module__desc">Stores each patient's diagnosis and visit notes. New records are written by the treating <b>Doctor</b> against a specific appointment — Administrators and front-desk staff can view this list, but only clinical staff can add or edit an entry, since it contains clinical notes.</p>
+          <div class="shots">
+            <figure><img src="img/08-medical-records.png" alt="Medical records list"><figcaption>Medical Records list (Admin view — no add button, since only Doctors create entries)</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-vitals" class="module">
+          <div class="module__header"><span class="module__number">9</span><h2>Vitals</h2><span class="module__path">/vitals</span></div>
+          <p class="module__desc"><b>To record vitals:</b> click <b>Record Vitals</b>, pick the patient, and enter blood pressure, temperature, pulse, respiratory rate, and SpO2. If any reading crosses a critical threshold, the system automatically raises a Critical Vital alert visible on the <a href="#m-alerts">Alerts</a> page and the header notification bell.</p>
+          <div class="shots">
+            <figure><img src="img/09-vitals.png" alt="Vitals list"><figcaption>Vitals list</figcaption></figure>
+            <figure><img src="img/09-vitals-add.png" alt="Record vitals dialog"><figcaption>Record Vitals dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-prescriptions" class="module">
+          <div class="module__header"><span class="module__number">10</span><h2>Prescriptions</h2><span class="module__path">/prescriptions</span></div>
+          <p class="module__desc">Doctors prescribe one or more medicines to a patient here, each with its own dosage, frequency, and duration. The prescription can then be printed or downloaded, and its items feed directly into the <a href="#m-medication-chart">Medication Chart</a> for nurses to administer.</p>
+          <div class="shots">
+            <figure><img src="img/10-prescriptions.png" alt="Prescriptions list"><figcaption>Prescriptions list</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-medication-chart" class="module">
+          <div class="module__header"><span class="module__number">11</span><h2>Medication Chart (MAR)</h2><span class="module__path">/medication-administrations</span></div>
+          <p class="module__desc"><b>To log a dose:</b> click the add button, select the patient and the prescribed medicine, then record whether the dose was <b>Administered</b> or <b>Skipped</b> at a given date and time. A skipped dose automatically raises an alert so the care team is notified.</p>
+          <div class="shots">
+            <figure><img src="img/11-medication-chart.png" alt="Medication chart list"><figcaption>Medication Chart list</figcaption></figure>
+            <figure><img src="img/11-medication-chart-add.png" alt="Record medication administration dialog"><figcaption>Record Administration dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-lab-reports" class="module">
+          <div class="module__header"><span class="module__number">12</span><h2>Lab Reports</h2><span class="module__path">/lab-reports</span></div>
+          <p class="module__desc">A lab test follows three steps: <b>1)</b> click <b>Order Test</b> to order it for a patient (status starts as Pending); <b>2)</b> once the sample is drawn, click the flask icon to <b>Collect Sample</b> and record the sample type; <b>3)</b> once results are ready, click the pencil icon to enter the result and mark it Completed — ticking <b>"Critical result"</b> automatically raises an alert for the care team.</p>
+          <div class="shots">
+            <figure><img src="img/12-lab-reports.png" alt="Lab reports list"><figcaption>Lab Reports list</figcaption></figure>
+            <figure><img src="img/12-lab-reports-add.png" alt="Order lab test dialog"><figcaption>Order Test dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-radiology" class="module">
+          <div class="module__header"><span class="module__number">13</span><h2>Radiology</h2><span class="module__path">/radiology</span></div>
+          <p class="module__desc"><b>To order a scan:</b> click <b>Order Scan</b>, choose the patient and the type of imaging needed (X-ray, CT, MRI, etc.). Once complete, the report and any findings can be recorded and shared with the ordering doctor.</p>
+          <div class="shots">
+            <figure><img src="img/13-radiology.png" alt="Radiology list"><figcaption>Radiology Orders list</figcaption></figure>
+            <figure><img src="img/13-radiology-add.png" alt="Order scan dialog"><figcaption>Order Scan dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-opd-queue" class="module">
+          <div class="module__header"><span class="module__number">14</span><h2>OPD Queue</h2><span class="module__path">/opd-queue</span></div>
+          <p class="module__desc">Manages the walk-in token queue for a doctor's clinic. <b>To issue a token,</b> click <b>Issue Token</b> and select the patient and doctor. Staff at the doctor's console then use <b>Call Next</b>, <b>Start</b>, <b>Complete</b>, or <b>Skip</b> to move each token through the queue. A read-only, login-free waiting-room display of the live queue is available at <code>/display/opd-queue</code> — ideal for a TV screen in the waiting area.</p>
+          <div class="shots">
+            <figure><img src="img/14-opd-queue.png" alt="OPD queue board"><figcaption>OPD Queue board</figcaption></figure>
+            <figure><img src="img/14-opd-queue-add.png" alt="Issue token dialog"><figcaption>Issue Token dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-ot-scheduling" class="module">
+          <div class="module__header"><span class="module__number">15</span><h2>OT Scheduling</h2><span class="module__path">/ot-scheduling</span></div>
+          <p class="module__desc"><b>To schedule a surgery:</b> click <b>Schedule Surgery</b>, pick the patient, surgeon, operation theatre, and the planned date/time. This checks the selected theatre's availability automatically to avoid double-booking.</p>
+          <div class="shots">
+            <figure><img src="img/15-ot-scheduling.png" alt="OT scheduling list"><figcaption>Surgery Schedules list</figcaption></figure>
+            <figure><img src="img/15-ot-scheduling-add.png" alt="Schedule surgery dialog"><figcaption>Schedule Surgery dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-operation-theatres" class="module">
+          <div class="module__header"><span class="module__number">16</span><h2>Operation Theatres</h2><span class="module__path">/operation-theatres</span></div>
+          <p class="module__desc">Manage the hospital's physical operation theatre rooms that surgeries are scheduled against. Click <b>Add Theatre</b> to register a new OT room and its status.</p>
+          <div class="shots">
+            <figure><img src="img/16-operation-theatres.png" alt="Operation theatres list"><figcaption>Operation Theatres list</figcaption></figure>
+            <figure><img src="img/16-operation-theatres-add.png" alt="Add theatre dialog"><figcaption>Add Theatre dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-blood-bank" class="module">
+          <div class="module__header"><span class="module__number">17</span><h2>Blood Bank</h2><span class="module__path">/blood-bank</span></div>
+          <p class="module__desc">Tracks blood donors, blood unit stock by blood group, and requests for blood from wards/departments. Use the tabs to register a donor, log a new blood unit into inventory, or raise a blood request. Units nearing expiry are flagged automatically.</p>
+          <div class="shots">
+            <figure><img src="img/17-blood-bank.png" alt="Blood bank dashboard"><figcaption>Blood Bank dashboard</figcaption></figure>
+            <figure><img src="img/17-blood-bank-add.png" alt="Blood bank add dialog"><figcaption>Add dialog (donor / unit / request)</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-referrals" class="module">
+          <div class="module__header"><span class="module__number">18</span><h2>Referrals</h2><span class="module__path">/referrals</span></div>
+          <p class="module__desc">Used when a doctor refers a patient onward to another doctor or department. Click <b>New Referral</b>, choose the patient, the referring and receiving doctor, and a reason. The receiving side can accept, decline, or complete the referral.</p>
+          <div class="shots">
+            <figure><img src="img/18-referrals.png" alt="Referrals list"><figcaption>Referrals list (this Admin account does not have referral-creation rights, so no add button is shown)</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-assets" class="module">
+          <div class="module__header"><span class="module__number">19</span><h2>Assets</h2><span class="module__path">/assets</span></div>
+          <p class="module__desc">Inventory of hospital equipment (beds, monitors, machines, etc.) and their maintenance history. Click <b>Add Asset</b> to register new equipment, and log maintenance visits against it as they happen.</p>
+          <div class="shots">
+            <figure><img src="img/19-assets.png" alt="Assets list"><figcaption>Assets list</figcaption></figure>
+            <figure><img src="img/19-assets-add.png" alt="Add asset dialog"><figcaption>Add Asset dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-feedback" class="module">
+          <div class="module__header"><span class="module__number">20</span><h2>Patient Feedback</h2><span class="module__path">/patient-feedback</span></div>
+          <p class="module__desc">Patients can share feedback and a rating about their visit or care experience from here by clicking <b>Share Feedback</b>. Staff can review submitted feedback to spot recurring issues.</p>
+          <div class="shots">
+            <figure><img src="img/20-feedback.png" alt="Feedback list"><figcaption>Patient Feedback list</figcaption></figure>
+            <figure><img src="img/20-feedback-add.png" alt="Share feedback dialog"><figcaption>Share Feedback dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-emergency" class="module">
+          <div class="module__header"><span class="module__number">21</span><h2>Emergency</h2><span class="module__path">/emergency</span></div>
+          <p class="module__desc">Logs walk-in emergency department visits separately from the regular appointment flow, including triage priority. Click the add button to register a new emergency visit as soon as a patient arrives.</p>
+          <div class="shots">
+            <figure><img src="img/21-emergency.png" alt="Emergency visits list"><figcaption>Emergency Visits list</figcaption></figure>
+            <figure><img src="img/21-emergency-add.png" alt="Add emergency visit dialog"><figcaption>New Emergency Visit dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-medicines" class="module">
+          <div class="module__header"><span class="module__number">22</span><h2>Medicines</h2><span class="module__path">/medicines</span></div>
+          <p class="module__desc">The master catalogue of medicines the pharmacy stocks, including unit price and reorder level. Click <b>Add Medicine</b> to add a new medicine to the catalogue before it can be stocked or prescribed.</p>
+          <div class="shots">
+            <figure><img src="img/22-medicines.png" alt="Medicines list"><figcaption>Medicines list</figcaption></figure>
+            <figure><img src="img/22-medicines-add.png" alt="Add medicine dialog"><figcaption>Add Medicine dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-pharmacy" class="module">
+          <div class="module__header"><span class="module__number">23</span><h2>Pharmacy</h2><span class="module__path">/pharmacy</span></div>
+          <p class="module__desc">Day-to-day pharmacy stock operations: view batches with expiry dates, manually receive stock, dispense stock against a prescription, and see low-stock or expiring-soon medicines at a glance. For a full paper trail against a supplier, use <a href="#m-purchase-orders">Purchase Orders</a> instead of manual receiving.</p>
+          <div class="shots">
+            <figure><img src="img/23-pharmacy.png" alt="Pharmacy dashboard"><figcaption>Pharmacy dashboard</figcaption></figure>
+            <figure><img src="img/23-pharmacy-add.png" alt="Pharmacy dialog"><figcaption>Receive / dispense stock dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-vendors" class="module">
+          <div class="module__header"><span class="module__number">24</span><h2>Vendors</h2><span class="module__path">/vendors</span></div>
+          <p class="module__desc">Manage the suppliers you buy medicines from. Click <b>Add Vendor</b> and enter their name, contact phone/email, and address — this is required before you can create a <a href="#m-purchase-orders">Purchase Order</a> against them.</p>
+          <div class="shots">
+            <figure><img src="img/24-vendors.png" alt="Vendors list"><figcaption>Vendors list</figcaption></figure>
+            <figure><img src="img/24-vendors-add.png" alt="Add vendor dialog"><figcaption>Add Vendor dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-purchase-orders" class="module">
+          <div class="module__header"><span class="module__number">25</span><h2>Purchase Orders</h2><span class="module__path">/purchase-orders</span></div>
+          <p class="module__desc"><b>To order medicines from a supplier:</b> click <b>New Purchase Order</b>, pick a vendor, and add one or more medicine lines with quantity and price. When stock physically arrives, open the order and click <b>Receive Goods</b> to record batch numbers and expiry dates — this automatically creates stock batches and updates medicine stock levels, and the order's status moves from Ordered → Partially Received → Received.</p>
+          <div class="shots">
+            <figure><img src="img/25-purchase-orders.png" alt="Purchase orders list"><figcaption>Purchase Orders list</figcaption></figure>
+            <figure><img src="img/25-purchase-orders-add.png" alt="New purchase order dialog"><figcaption>New Purchase Order dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-staff-scheduling" class="module">
+          <div class="module__header"><span class="module__number">26</span><h2>Staff Scheduling</h2><span class="module__path">/staff-scheduling</span></div>
+          <p class="module__desc">Plan shift/duty schedules for doctors and nurses. Click the add button to assign a staff member to a shift on a given date, so managers can see who is on duty at any time.</p>
+          <div class="shots">
+            <figure><img src="img/26-staff-scheduling.png" alt="Staff scheduling list"><figcaption>Staff Scheduling list</figcaption></figure>
+            <figure><img src="img/26-staff-scheduling-add.png" alt="Add shift dialog"><figcaption>Assign shift dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-consents" class="module">
+          <div class="module__header"><span class="module__number">27</span><h2>Consents</h2><span class="module__path">/consents</span></div>
+          <p class="module__desc"><b>To request a consent form:</b> click <b>Request Consent</b>, choose the patient and the procedure it covers. The patient (or their representative) can then review and grant or decline it, and the outcome is recorded for compliance.</p>
+          <div class="shots">
+            <figure><img src="img/27-consents.png" alt="Consents list"><figcaption>Consents list</figcaption></figure>
+            <figure><img src="img/27-consents-add.png" alt="Request consent dialog"><figcaption>Request Consent dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-documents" class="module">
+          <div class="module__header"><span class="module__number">28</span><h2>Patient Documents</h2><span class="module__path">/patient-documents</span></div>
+          <p class="module__desc">Upload and store scanned documents against a patient's profile — ID proofs, previous reports, referral letters, and so on. Click the add button, choose the patient, and upload the file.</p>
+          <div class="shots">
+            <figure><img src="img/28-documents.png" alt="Patient documents list"><figcaption>Patient Documents list</figcaption></figure>
+            <figure><img src="img/28-documents-add.png" alt="Upload document dialog"><figcaption>Upload Document dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-billing" class="module">
+          <div class="module__header"><span class="module__number">29</span><h2>Billing</h2><span class="module__path">/billing</span></div>
+          <p class="module__desc"><b>To create a bill:</b> click <b>New Bill</b>, select the patient, and add one or more line items — each with a description, type, amount, quantity, an optional HSN/SAC code, and a GST rate (0/5/12/18/28%). The subtotal, tax, and total are calculated live as you type. Open a bill to record a payment, cancel it, or click <b>Download PDF</b> for a GST-compliant invoice showing the hospital's GSTIN and a CGST/SGST breakdown.</p>
+          <div class="shots">
+            <figure><img src="img/29-billing.png" alt="Billing list"><figcaption>Billing list</figcaption></figure>
+            <figure><img src="img/29-billing-add.png" alt="New bill dialog"><figcaption>New Bill dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-insurance-providers" class="module">
+          <div class="module__header"><span class="module__number">30</span><h2>Insurance Providers</h2><span class="module__path">/insurance-providers</span></div>
+          <p class="module__desc">Master list of insurance companies the hospital works with (e.g. Star Health, HDFC Ergo). Click <b>Add Provider</b> before you can link a patient's policy to that insurer.</p>
+          <div class="shots">
+            <figure><img src="img/30-insurance-providers.png" alt="Insurance providers list"><figcaption>Insurance Providers list</figcaption></figure>
+            <figure><img src="img/30-insurance-providers-add.png" alt="Add provider dialog"><figcaption>Add Provider dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-insurance-policies" class="module">
+          <div class="module__header"><span class="module__number">31</span><h2>Insurance Policies</h2><span class="module__path">/insurance-policies</span></div>
+          <p class="module__desc">Links a patient to their insurance policy number, provider, and coverage validity dates. Click <b>Add Policy</b> and select the patient and provider — this is needed before filing an insurance claim or pre-authorization for that patient.</p>
+          <div class="shots">
+            <figure><img src="img/31-insurance-policies.png" alt="Insurance policies list"><figcaption>Insurance Policies list</figcaption></figure>
+            <figure><img src="img/31-insurance-policies-add.png" alt="Add policy dialog"><figcaption>Add Policy dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-insurance-claims" class="module">
+          <div class="module__header"><span class="module__number">32</span><h2>Insurance Claims</h2><span class="module__path">/claims</span></div>
+          <p class="module__desc">File a claim against an existing bill for a patient's insurance policy, track its approved amount, and settle it once the insurer pays out — the linked bill's paid amount updates automatically on settlement.</p>
+          <div class="shots">
+            <figure><img src="img/32-insurance-claims.png" alt="Insurance claims list"><figcaption>Insurance Claims list</figcaption></figure>
+            <figure><img src="img/32-insurance-claims-add.png" alt="File claim dialog"><figcaption>File Claim dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-insurance-preauth" class="module">
+          <div class="module__header"><span class="module__number">33</span><h2>Insurance Pre-Authorizations</h2><span class="module__path">/insurance-pre-authorizations</span></div>
+          <p class="module__desc">Used to request an insurer's approval <i>before</i> an expensive procedure or admission, rather than claiming after the fact. Click <b>Request Pre-Authorization</b>, pick the patient's policy and the relevant admission, and submit the requested amount for the insurer to approve or reject.</p>
+          <div class="shots">
+            <figure><img src="img/33-insurance-preauth.png" alt="Insurance pre-authorizations list"><figcaption>Insurance Pre-Authorizations list</figcaption></figure>
+            <figure><img src="img/33-insurance-preauth-add.png" alt="Request pre-authorization dialog"><figcaption>Request Pre-Authorization dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-ai-assistant" class="module">
+          <div class="module__header"><span class="module__number">34</span><h2>AI Assistant</h2><span class="module__path">/ai-assistant</span></div>
+          <p class="module__desc">A chat assistant you can ask hospital-related questions in plain language — for example "What are my upcoming appointments?" or "Show me my last lab report." It only answers using information you're allowed to see: patients get answers about themselves, while staff get broader, role-appropriate access.</p>
+          <div class="shots">
+            <figure><img src="img/34-ai-assistant.png" alt="AI assistant chat"><figcaption>AI Assistant chat</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-audit-logs" class="module">
+          <div class="module__header"><span class="module__number">35</span><h2>Audit Logs</h2><span class="module__path">/audit-logs</span></div>
+          <p class="module__desc">A read-only, system-wide trail of who changed what and when — visible to Administrators only. Use it to investigate a change or confirm an action was taken. There is nothing to add here; it fills in automatically as the system is used.</p>
+          <div class="shots">
+            <figure><img src="img/35-audit-logs.png" alt="Audit logs list"><figcaption>Audit Logs list</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-ai-interaction-logs" class="module">
+          <div class="module__header"><span class="module__number">36</span><h2>AI Interaction Logs</h2><span class="module__path">/ai-interaction-logs</span></div>
+          <p class="module__desc">A read-only oversight log of conversations users have had with the <a href="#m-ai-assistant">AI Assistant</a>, visible to Administrators only — useful for reviewing AI behaviour and answer quality over time.</p>
+          <div class="shots">
+            <figure><img src="img/36-ai-interaction-logs.png" alt="AI interaction logs list"><figcaption>AI Interaction Logs list</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-hospital-settings" class="module">
+          <div class="module__header"><span class="module__number">37</span><h2>Hospital Settings</h2><span class="module__path">/hospital-settings</span></div>
+          <p class="module__desc">Admin-only, hospital-wide configuration: hospital name, address, contact details, working hours, the default appointment slot length, and the hospital's <b>GSTIN</b> (used on billing invoices). Update the fields and click <b>Save changes</b>.</p>
+          <div class="shots">
+            <figure><img src="img/37-hospital-settings.png" alt="Hospital settings form"><figcaption>Hospital Settings form</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-alerts" class="module">
+          <div class="module__header"><span class="module__number">38</span><h2>Alerts</h2><span class="module__path">/alerts</span></div>
+          <p class="module__desc">A central feed of clinical alerts — critical vitals, critical lab results, skipped medication doses, and manually raised concerns. Clinical staff can <b>Acknowledge</b> and then <b>Resolve</b> an alert. Staff can also raise one manually via <b>Raise Alert</b>. The same live feed also appears under the bell icon in the top header, wherever you are in the app.</p>
+          <div class="shots">
+            <figure><img src="img/38-alerts.png" alt="Alerts list"><figcaption>Alerts list</figcaption></figure>
+            <figure><img src="img/38-alerts-add.png" alt="Raise alert dialog"><figcaption>Raise Alert dialog</figcaption></figure>
+          </div>
+        </section>
+
+        <section id="m-role-permissions" class="module">
+          <div class="module__header"><span class="module__number">39</span><h2>Role &amp; Permission Management</h2><span class="module__path">/role-permissions</span></div>
+          <p class="module__desc">Admin-only screen to control exactly which modules each role (Admin, Doctor, Nurse, Receptionist, Patient) can View, Create, Edit, or Delete. Select a role tab, tick or untick the checkboxes per module, then click <b>Save Changes</b>. Affected users see the new permissions the next time they log in or their session refreshes.</p>
+          <div class="shots">
+            <figure><img src="img/39-role-permissions.png" alt="Role permission management"><figcaption>Role &amp; Permission Management</figcaption></figure>
+            <figure><img src="img/39-role-permissions-add.png" alt="Saving role permission changes"><figcaption>Saving changes — a confirmation toast appears</figcaption></figure>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <a href="#getting-started" class="back-to-top" aria-label="Back to top">&#8593;</a>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightboxImg" src="" alt="Zoomed screenshot">
+  </div>
+
+  <script>
+    // Mobile nav toggle
+    var toggle = document.getElementById('navToggle');
+    var sidebar = document.getElementById('sidebar');
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        sidebar.classList.toggle('open');
+      });
+    }
+    document.getElementById('sideNav').addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') sidebar.classList.remove('open');
+    });
+
+    // Click-to-zoom lightbox for every screenshot
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightboxImg');
+    document.querySelectorAll('figure img').forEach(function (img) {
+      img.addEventListener('click', function () {
+        lightboxImg.src = img.src;
+        lightbox.classList.add('open');
+      });
+    });
+    lightbox.addEventListener('click', function () {
+      lightbox.classList.remove('open');
+      lightboxImg.src = '';
+    });
+
+    // Highlight active section in sidebar while scrolling
+    var links = Array.prototype.slice.call(document.querySelectorAll('#sideNav a'));
+    var sections = links
+      .map(function (a) { return document.querySelector(a.getAttribute('href')); })
+      .filter(Boolean);
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = document.querySelector('#sideNav a[href="#' + entry.target.id + '"]');
+        if (!link) return;
+        if (entry.isIntersecting) {
+          links.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function (s) { observer.observe(s); });
+  </script>
+</body>
+</html>
